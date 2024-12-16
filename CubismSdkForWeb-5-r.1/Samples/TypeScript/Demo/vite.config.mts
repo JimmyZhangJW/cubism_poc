@@ -7,7 +7,7 @@ export default defineConfig((env: ConfigEnv): UserConfig => {
       port: 5000,
     },
     root: './',
-    base: '/',
+    base: env.mode === 'development' ? '/' : '/cubism_poc/',
     publicDir: './public',
     resolve: {
       extensions: ['.ts', '.js'],
