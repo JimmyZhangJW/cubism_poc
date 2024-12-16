@@ -72,6 +72,50 @@ export class LAppLive2DManager {
     this._models.clear();
   }
 
+  public performActionsInSequence(actions: { type: string, name: string, no: number, time: number }[], idleExpression: string) {
+    const model = this.getModel(0);
+    if (model) {
+      console.log("hello")
+      this._executeActionsSequentially(model, actions, idleExpression, 0);
+    }
+  }
+
+  private _executeActionsSequentially(model: LAppModel, actions: { type: string, name: string, no: number, time: number }[], idleExpression: string, index: number) {
+    if (index < actions.length) {
+      const action = actions[index];
+      const startTime = Date.now();
+      if (action.type === 'expression') {
+        model.setExpression(action.name);
+        this._waitForCompletion(action.time, startTime, () => {
+          this._executeActionsSequentially(model, actions, idleExpression, index + 1);
+        });
+      } else if (action.type === 'motion') {
+        // model.startMotion(action.name, action.no, 0, this._finishedMotion);
+        model.startRandomMotion(action.name, LAppDefine.PriorityNormal, ()=> {
+          this._waitForCompletion(action.time, startTime, () => {
+            console.log("ok")
+            this._executeActionsSequentially(model, actions, idleExpression, index + 1);
+          });
+        })
+      }
+    } else {
+      // Set to idle expression
+      model.setExpression(idleExpression);
+    }
+  }
+
+  private _waitForCompletion(time: number, startTime: number, callback: () => void) {
+    const elapsed = Date.now() - startTime;
+    const remainingTime = time - elapsed;
+    setTimeout(callback, remainingTime > 0 ? remainingTime : 0);
+  }
+
+
+  public triggerAction(actionName: string): void {
+    console.log("trigger", actionName)
+    this.getModel(0).startRandomMotion(actionName, LAppDefine.PriorityNormal, this._finishedMotion)
+  }
+
   /**
    * 画面をドラッグした時の処理
    *

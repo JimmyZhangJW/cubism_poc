@@ -150,8 +150,8 @@ export class LAppModel extends CubismUserModel {
 
         for (let i = 0; i < count; i++) {
           const expressionName = this._modelSetting.getExpressionName(i);
-          const expressionFileName =
-            this._modelSetting.getExpressionFileName(i);
+          const expressionFileName = this._modelSetting.getExpressionFileName(i);
+          console.log("Expression", expressionName)
 
           fetch(`${this._modelHomeDir}${expressionFileName}`)
             .then(response => {
@@ -511,10 +511,10 @@ export class LAppModel extends CubismUserModel {
     this._model.loadParameters(); // 前回セーブされた状態をロード
     if (this._motionManager.isFinished()) {
       // モーションの再生がない場合、待機モーションの中からランダムで再生する
-      this.startRandomMotion(
-        LAppDefine.MotionGroupIdle,
-        LAppDefine.PriorityIdle
-      );
+      // this.startRandomMotion(
+      //   LAppDefine.MotionGroupIdle,
+      //   LAppDefine.PriorityIdle
+      // );
     } else {
       motionUpdated = this._motionManager.updateMotion(
         this._model,
