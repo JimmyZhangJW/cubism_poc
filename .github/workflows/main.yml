@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        cd CubismSdkForWeb-5-r.1/Samples/TypeScript/Demo
+        npm install
+
+    - name: Build project
+      run: |
+        cd CubismSdkForWeb-5-r.1/Samples/TypeScript/Demo
+        npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3.8.0
+      with:
+        github_token: ${{ secrets.WORKFLOW_TOKEN }}
+        publish_dir: ./CubismSdkForWeb-5-r.1/Samples/TypeScript/Demo/dist
